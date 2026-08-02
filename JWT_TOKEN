@@ -1,0 +1,19 @@
+# Register user
+POST /api/v1/users/register/
+{
+  "username": "tijuks",
+  "email": "tijuks@github.com",
+  "token": ""
+}
+
+# Login
+POST /api/v1/users/login/
+{
+  "username": "tijuks",
+  "email": "tijuks@github.com",
+}
+
+# Use token in requests
+GET /api/v1/users/me/
+Header: Authorization: 
+Token YOUR_TOKEN_KEY
