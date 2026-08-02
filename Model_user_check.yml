@@ -1,0 +1,16 @@
+CustomUser(AbstractUser):
+  - id (Primary Key)
+  - username (unique, indexed)
+  - email (unique)
+  - password (hashed)
+  - first_name
+  - last_name
+  - phone (with validation)
+  - bio (max 500 chars)
+  - profile_image (upload)
+  - is_verified (email verification)
+  - two_factor_enabled
+  - is_active
+  - is_staff
+  - created_at (auto_now_add, indexed)
+  - updated_at (auto_now)
