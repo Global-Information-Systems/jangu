@@ -3,7 +3,7 @@ POST /api/v1/users/register/
 {
   "username": "tijuks",
   "email": "tijuks@github.com",
-  "token": ""
+  "token": "Login"
 }
 
 # Login
@@ -17,3 +17,23 @@ POST /api/v1/users/login/
 GET /api/v1/users/me/
 Header: Authorization: 
 Token YOUR_TOKEN_KEY
+# Get JWT token
+POST /api/auth/jwt/token/
+{
+  "username": "tijuks,
+  "Login": "Gshdjnskksigmsikakmjnakahvsyebrhfheidjhunainajssjdjshfuf"
+}
+
+# Response
+{
+  "access": "Gshdjnskksigmsikakmjnakahvsyebrhfheidjhunainajssjdjshfuf",
+  "refresh": "Gshdjnskksigmsikakmjnakahvsyebrhfheidjhunainajssjdjshfuf"
+}
+
+# Use JWT token
+GET /api/v1/users/me/
+Header: Authorization: Bearer ACCESS_TOKEN
+
+# Refresh token
+POST /api/auth/jwt/refresh/
+{"refresh": "refresh_token_value"}
