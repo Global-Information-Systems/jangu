@@ -1,0 +1,73 @@
+name: Staging — Build Jekyll → gh-pages/staging
+on:
+  push:
+    branches: [ staging ]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: |
+          if [ -f Gemfile ]; then
+            bundle config set deployment 'true' || true
+            bundle install --jobs 4 --retry 3
+          else
+            gem install jekyll bundler --no-document
+          fi
+
+      - name: Build Jekyll site
+        env:
+          JEKYLL_ENV: production
+        run: |
+          if [ -f Gemfile ]; then
+            bundle exec jekyll build -d _site
+          else
+            jekyll build -d _site
+          fi
+
+      - name: Prepare gh-pages clone
+        run: |
+          set -e
+          REPO="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          # ensure gh-pages exists
+          if git ls-remote --exit-code origin gh-pages; then
+            git clone --branch gh-pages "$REPO" gh-pages
+          else
+            git clone "$REPO" gh-pages || true
+            cd gh-pages || true
+            git checkout --orphan gh-pages || true
+            git rm -rf . || true
+            git commit --allow-empty -m "Create gh-pages branch" || true
+            git push origin gh-pages || true
+            cd ..
+            git clone --branch gh-pages "$REPO" gh-pages
+          fi
+
+      - name: Copy site to staging folder
+        run: |
+          rm -rf gh-pages/staging
+          mkdir -p gh-pages/staging
+          cp -a _site/* gh-pages/staging/
+
+      - name: Commit and push staging
+        run: |
+          cd gh-pages
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(staging): update staging site from staging branch" || echo "No changes to commit"
+          git push origin gh-pages
