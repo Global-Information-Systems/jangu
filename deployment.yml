@@ -1,0 +1,76 @@
+name: Deploy — Build Jekyll → gh-pages (production)
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: |
+          if [ -f Gemfile ]; then
+            bundle config set deployment 'true' || true
+            bundle install --jobs 4 --retry 3
+          else
+            gem install jekyll bundler --no-document
+          fi
+
+      - name: Build Jekyll site
+        env:
+          JEKYLL_ENV: production
+        run: |
+          if [ -f Gemfile ]; then
+            bundle exec jekyll build -d _site
+          else
+            jekyll build -d _site
+          fi
+
+      - name: Prepare gh-pages clone
+        run: |
+          set -e
+          REPO="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          if git ls-remote --exit-code origin gh-pages; then
+            git clone --branch gh-pages "$REPO" gh-pages
+          else
+            git clone "$REPO" gh-pages || true
+            cd gh-pages || true
+            git checkout --orphan gh-pages || true
+            git rm -rf . || true
+            git commit --allow-empty -m "Create gh-pages branch" || true
+            git push origin gh-pages || true
+            cd ..
+            git clone --branch gh-pages "$REPO" gh-pages
+          fi
+
+      - name: Replace root with built site (preserve staging/)
+        run: |
+          mkdir -p gh-pages/preserved
+          if [ -d gh-pages/staging ]; then mv gh-pages/staging gh-pages/preserved/staging; fi
+          rm -rf gh-pages/*
+          mkdir -p gh-pages
+          cp -a _site/* gh-pages/
+          if [ -d gh-pages/preserved/staging ]; then mv gh-pages/preserved/staging gh-pages/staging; fi
+          rm -rf gh-pages/preserved || true
+
+      - name: Commit and push production
+        run: |
+          cd gh-pages
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(deploy): publish site from main" || echo "No changes to commit"
+          git push origin gh-pages
