@@ -2,16 +2,16 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "ci/diagnostics" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "ci/diagnostics" ]
+  workflow_dispatch:
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: |
+          echo "Placeholder: insert your docker build and push steps here"
