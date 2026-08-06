@@ -1,0 +1,19 @@
+CustomUser
+  ├── OneToMany → Token
+  ├── OneToMany → Order
+  └── OneToMany → Profile (future)
+
+Product
+  ├── ForeignKey ← Category
+  └── OneToMany → OrderItem
+
+Order
+  ├── ForeignKey → CustomUser
+  └── OneToMany → OrderItem
+
+OrderItem
+  ├── ForeignKey → Order
+  └── ForeignKey → Product
+
+Category
+  └── OneToMany → Product
