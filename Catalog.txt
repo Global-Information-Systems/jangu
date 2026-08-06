@@ -1,0 +1,22 @@
+Category:
+  - id (Primary Key)
+  - name (unique, 255 chars, indexed)
+  - slug (unique, URL-safe)
+  - description (TextField)
+  - created_at (auto_now_add)Category:
+  - id (Primary Key)
+  - name (unique, 255 chars, indexed)
+  - slug (unique, URL-safe)
+  - description (TextField)
+  - created_at (auto_now_add)Product:
+  - id (Primary Key)
+  - name (255 chars, indexed)
+  - description (TextField)
+  - price (Decimal, non-negative, indexed)
+  - category (ForeignKey to Category)
+  - stock (PositiveInteger)
+  - image (ImageField, upload to 'products/')
+  - slug (unique, indexed)
+  - is_active (Boolean, default True, indexed)
+  - created_at (auto_now_add, indexed)
+  - updated_at (auto_now)

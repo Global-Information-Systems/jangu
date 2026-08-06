@@ -1,0 +1,12 @@
+Product:
+  - id (Primary Key)
+  - name (255 chars, indexed)
+  - description (TextField)
+  - price (Decimal, non-negative, indexed)
+  - category (ForeignKey to Category)
+  - stock (PositiveInteger)
+  - image (ImageField, upload to 'products/')
+  - slug (unique, indexed)
+  - is_active (Boolean, default True, indexed)
+  - created_at (auto_now_add, indexed)
+  - updated_at (auto_now)
