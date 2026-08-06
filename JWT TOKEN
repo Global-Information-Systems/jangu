@@ -1,0 +1,20 @@
+# Get JWT token
+POST /api/auth/jwt/token/
+{
+  "username": "john",
+  "password": "SecurePassword123"
+}
+
+# Response
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+}
+
+# Use JWT token
+GET /api/v1/users/me/
+Header: Authorization: Bearer ACCESS_TOKEN
+
+# Refresh token
+POST /api/auth/jwt/refresh/
+{"refresh": "refresh_token_value"}
