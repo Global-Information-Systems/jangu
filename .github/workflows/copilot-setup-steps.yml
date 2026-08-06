@@ -1,0 +1,72 @@
+# TaskSync Copilot Setup & Team Workflow Steps
+# Version: 1.0.0
+# Description: Automated setup, role verification, real-time sync hooks, and audit logging configuration for TaskSync Copilot
+
+name: TaskSync Team Collaboration & Copilot Workflow
+version: "1.0.0"
+environment:
+  NODE_ENV: production
+  SYNC_MODE: real-time-offline-hybrid
+  PERSISTENCE_ENGINE: indexeddb-broadcast-channel
+  DEFAULT_ROLE: Member
+
+setup_steps:
+  - id: init_environment
+    name: Initialize Real-Time Sync & Storage Engine
+    description: Boots the IndexedDB local cache and establishes BroadcastChannel tab synchronization.
+    action: system.init_storage
+    params:
+      db_name: "tasksync_db"
+      version: 1
+      tables:
+        - tasks
+        - audit_logs
+        - projects
+        - users
+        - sync_queue
+
+  - id: verify_rbac
+    name: Validate Role-Based Access Control
+    description: Verifies active user identity and enforces permissions matrix.
+    action: auth.verify_role
+    roles:
+      Admin:
+        permissions: [create_project, edit_task, delete_task, manage_roles, clear_audit, edit_workflow]
+      Project Manager:
+        permissions: [create_project, edit_task, delete_task, edit_workflow]
+      Member:
+        permissions: [edit_assigned_task, comment_task, update_status]
+      Viewer:
+        permissions: [view_tasks, view_audit_logs]
+
+  - id: audit_log_interceptor
+    name: Attach Comprehensive Audit Listener
+    description: Intercepts all state mutations and logs user, timestamp, previous state, and action payload.
+    action: audit.enable_logging
+    params:
+      retention_days: 90
+      log_level: VERBOSE
+      events:
+        - TASK_CREATED
+        - TASK_UPDATED
+        - TASK_DELETED
+        - ROLE_CHANGED
+        - OFFLINE_SYNC_QUEUED
+        - OFFLINE_SYNC_COMPLETED
+
+  - id: copilot_automation_hooks
+    name: Copilot Intelligent Task Automations
+    description: Automated triggers when task events occur across teams.
+    triggers:
+      - event: ON_TASK_STATUS_CHANGED
+        condition: "task.status == 'Done'"
+        actions:
+          - log_audit: "Task '{{task.title}}' completed by {{user.name}}"
+          - notify_assignee: true
+          - sync_remote: true
+      - event: ON_OFFLINE_RECONNECT
+        condition: "sync_queue.length > 0"
+        actions:
+          - flush_sync_queue: true
+          - notify_user: "Synced {{sync_queue.length}} offline edits successfully!"
+          
