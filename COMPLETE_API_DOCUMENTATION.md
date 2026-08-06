@@ -264,7 +264,7 @@ GET    /v1/products/                          - List Products
 GET    /v1/products/{id}/                     - Product Detail
 POST   /v1/products/                          - Create Product
 PUT    /v1/products/{id}/                     - Update Product
-DELETE /v1/products/{id}/                     - Delete Product
+DELETE /api/v1/products/{id}/                 - Delete Product
 GET    /v1/categories/                        - List Categories
 GET    /v1/categories/{id}/                   - Category Detail
 ```
@@ -275,8 +275,8 @@ GET    /v1/orders/                            - List Orders
 GET    /v1/orders/{id}/                       - Order Detail
 POST   /v1/orders/                            - Create Order
 PUT    /v1/orders/{id}/                       - Update Order
-DELETE /v1/orders/{id}/                       - Delete Order
-POST   /v1/orders/{id}/cancel/                - Cancel Order
+DELETE /api/v1/orders/{id}/                   - Delete Order
+POST   /api/v1/orders/{id}/cancel/                - Cancel Order
 ```
 
 ---
