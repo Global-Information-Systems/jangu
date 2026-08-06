@@ -1,0 +1,18 @@
+# Register user
+POST /api/v1/users/register/
+{
+  "username": "john",
+  "email": "john@example.com",
+  "password": "SecurePassword123"
+}
+
+# Login
+POST /api/v1/users/login/
+{
+  "username": "john",
+  "password": "SecurePassword123"
+}
+
+# Use token in requests
+GET /api/v1/users/me/
+Header: Authorization: Token YOUR_TOKEN_KEY
