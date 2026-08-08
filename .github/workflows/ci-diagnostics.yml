@@ -1,4 +1,4 @@
-- name: Diagnostic - environment
+#name: Diagnostic - environment
   run: |
     echo "Runner: $RUNNER_OS"
     uname -a

@@ -1,0 +1,6 @@
+OrderItem:
+  - id (Primary Key)
+  - order (ForeignKey to Order, related_name='items')
+  - product (ForeignKey to Product)
+  - quantity (PositiveInteger)
+  - price (DecimalField, captured at order time)
