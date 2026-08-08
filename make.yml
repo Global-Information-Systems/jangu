@@ -1,0 +1,4 @@
+- name: Git Version Cmake
+  # You may pin to the exact commit or the version.
+  # uses: toitlang/action-git-version@93faa407cae35e31cf0bd3bac7cfc89f65926be4
+  uses: toitlang/action-git-version@v1.1.0
